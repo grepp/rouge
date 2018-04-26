@@ -12,9 +12,8 @@ module Rouge
       filenames '*.pl', '*.pm'
       mimetypes 'text/x-perl', 'application/x-perl'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'perl'
-        return 0.4 if text.include? 'my $'
+      def self.detect?(text)
+        return true if text.shebang? 'perl'
       end
 
       keywords = %w(
@@ -105,6 +104,7 @@ module Rouge
         rule /__END__\b/, Comment::Preproc, :end_part
         rule /\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
         rule /\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
+        rule /[-+\/*%=<>&^\|!\\~]=?/, Operator
         rule /[$@%#]+/, Name::Variable, :varname
 
         rule /0_?[0-7]+(_[0-7]+)*/, Num::Oct
@@ -129,7 +129,6 @@ module Rouge
         rule /sub\s+/, Keyword, :funcname
         rule /\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
           Operator
-        rule /[-+\/*%=<>&^\|!\\~]=?/, Operator
         rule /[()\[\]:;,<>\/?{}]/, Punctuation
         rule(/(?=\w)/) { push :name }
       end

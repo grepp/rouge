@@ -2,16 +2,19 @@ sudo: false
 dist: trusty
 language: ruby
 rvm:
-  - "1.9.3"
   - "2.0"
   - "2.1"
   - "2.2"
   - "2.3"
   - "2.4"
+  - "2.5"
 
 cache:
   bundler: true
-before_install: gem update bundler
+bundler_args: --without development
+before_install:
+  - gem install bundler
+  - gem update --system
 script:
   - bundle exec rake
-  - if ruby -e 'exit RUBY_VERSION >= "2.0.0"' ; then bundle exec rubocop ; fi
+  - bundle exec rubocop

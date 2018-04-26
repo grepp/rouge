@@ -13,14 +13,14 @@ module Rouge
 
       state :root do
         rule /\s+/, Text
-        rule %r(//.*?\n), Comment::Single
+        rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule /@import\b/, Keyword, :value
 
         mixin :content_common
 
         rule(/(?=[^;{}][;}])/) { push :attribute }
-        rule(/(?=[^;{}:]+:[^a-z])/) { push :attribute }
+        rule(/(?=[^;{}:\[]+:[^a-z])/) { push :attribute }
 
         rule(//) { push :selector }
       end

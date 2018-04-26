@@ -55,11 +55,6 @@ module Rouge
         )
       end
 
-      # high priority for filename matches
-      def self.analyze_text(*)
-        0.3
-      end
-
       def self.builtins
         @builtins ||= []
       end
@@ -90,7 +85,7 @@ module Rouge
 
       state :whitespace do
         rule /\n+/m, Text, :bol
-        rule %r(//(\\.|.)*?\n), Comment::Single, :bol
+        rule %r(//(\\.|.)*?$), Comment::Single, :bol
         mixin :inline_whitespace
       end
 

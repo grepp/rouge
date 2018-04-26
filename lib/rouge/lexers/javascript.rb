@@ -14,11 +14,11 @@ module Rouge
 
       tag 'javascript'
       aliases 'js'
-      filenames '*.js'
+      filenames '*.js', '*.mjs'
       mimetypes 'application/javascript', 'application/x-javascript',
                 'text/javascript', 'text/x-javascript'
 
-      def self.analyze_text(text)
+      def self.detect?(text)
         return 1 if text.shebang?('node')
         return 1 if text.shebang?('jsc')
         # TODO: rhino, spidermonkey, etc

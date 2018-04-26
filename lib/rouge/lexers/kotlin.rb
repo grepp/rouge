@@ -3,8 +3,10 @@
 module Rouge
   module Lexers
     class Kotlin < RegexLexer
+      # https://kotlinlang.org/docs/reference/grammar.html
+
       title "Kotlin"
-      desc "Kotlin <http://kotlinlang.org>"
+      desc "Kotlin Programming Language (http://kotlinlang.org)"
 
       tag 'kotlin'
       filenames '*.kt'
@@ -29,7 +31,7 @@ module Rouge
         rule %r'^\s*\[.*?\]', Name::Attribute
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
-        rule %r'//.*?\n', Comment::Single
+        rule %r'//.*?$', Comment::Single
         rule %r'/[*].*?[*]/'m, Comment::Multiline
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator
@@ -41,26 +43,23 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule %r'(companion)(\s+)(object)' do
+        rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end
-        rule %r'(class|data\s+class|interface|object)(\s+)' do
+        rule %r'\b(class|data\s+class|interface|object)(\s+)' do
           groups Keyword::Declaration, Text
           push :class
         end
-        rule %r'(package|import)(\s+)' do
+        rule %r'\b(package|import)(\s+)' do
           groups Keyword, Text
           push :package
         end
-        rule %r'(val|var)(\s+)' do
+        rule %r'\b(val|var)(\s+)' do
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r'(fun)(\s+)' do
-          groups Keyword, Text
-          push :function
-        end
-        rule /(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/\bfun\b/, Keyword
+        rule /\b(?:#{keywords.join('|')})\b/, Keyword
         rule id, Name
       end
 
@@ -74,10 +73,6 @@ module Rouge
 
       state :property do
         rule id, Name::Property, :pop!
-      end
-
-      state :function do
-        rule id, Name::Function, :pop!
       end
     end
   end

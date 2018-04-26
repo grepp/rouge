@@ -15,7 +15,9 @@ Gem::Specification.new do |s|
   s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
   s.licenses = ['MIT', 'BSD-2-Clause']
-
-  s.add_development_dependency "bundler", "~> 1.10"
-  s.add_development_dependency "rake", "~> 12.0"
+  s.required_ruby_version = '>= 2.0'
+  s.metadata = {
+    'source_code_uri' => 'https://github.com/jneen/rouge',
+    'changelog_uri' => 'https://github.com/jneen/rouge/blob/master/CHANGELOG.md'
+  }
 end

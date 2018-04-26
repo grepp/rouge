@@ -4,6 +4,79 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.1.1: 2018/01/31
+
+https://github.com/jneen/rouge/compare/v3.1.0...v3.1.1
+
+* Perl
+  * [Fix \#851: error on modulo operato in Perl by miparnisari · Pull Request \#853 · jneen/rouge](https://github.com/jneen/rouge/pull/853)
+* JavaScript
+  * [Detect \*\.mjs files as being JavaScript by Kovensky · Pull Request \#866 · jneen/rouge](https://github.com/jneen/rouge/pull/866)
+* Swift
+  [\[Swift\] Undo parsing function calls with trailing closure by dan\-zheng · Pull Request \#862 · jneen/rouge](https://github.com/jneen/rouge/pull/862)
+* Vue
+  * [Fix load SCSS in Vue by purecaptain · Pull Request \#842 · jneen/rouge](https://github.com/jneen/rouge/pull/842)
+
+## version 3.1.0: 2017/12/21
+
+Thanks a lot for contributions; not only for the code, but also for the issues and review comments, which are vitally helpful.
+
+https://github.com/jneen/rouge/compare/v3.0.0...v3.1.0
+* gemspec
+  * Add source code and changelog links to gemspec [#785](https://github.com/jneen/rouge/pull/785) by @timrogers
+* General
+  * Fix #796: comments not followed by a newline are not highlighted [#797](https://github.com/jneen/rouge/pull/797) by @tyxchen
+* Elem
+  * Add Elm language support [#744](https://github.com/jneen/rouge/pull/744) by @dmitryrogozhny
+* Ruby
+  * Add the .erb file extension to ruby highlighting [#713](https://github.com/jneen/rouge/pull/713) by @jstumbaugh
+* Hack
+  * Add basic Hack support [#712](https://github.com/jneen/rouge/pull/712) by @fredemmott
+* F#
+  * Allow double backtick F# identifiers [#793](https://github.com/jneen/rouge/pull/793) by @nickbabcock
+* Swift
+  * Swift support for backticks and keypath syntax  [#794](https://github.com/jneen/rouge/pull/794) by @johnfairh
+  * [Swift] Tuple destructuring, function call with lambda argument [#837](https://github.com/jneen/rouge/pull/837) by @dan-zheng
+* Python
+  * Add async and await keywords to Python lexer [#799](https://github.com/jneen/rouge/pull/799) by @BigChief45
+* Shell
+  * Add missing shell commands and missing GNU coreutils executables [#798](https://github.com/jneen/rouge/pull/798) by @kernhanda
+* PowerShell
+  * Add JEA file extensions to powershell [#807](https://github.com/jneen/rouge/pull/807) by @michaeltlombardi
+* SASS / SCSS
+  * Don't treat `[` as a part of an attribute name in SCSS [#839](https://github.com/jneen/rouge/pull/839) by @hibariya
+* Haskell
+  * Don't treat `error` specially in Haskell [#834](https://github.com/jneen/rouge/pull/834) by @enolan
+* Rust
+  * Rust: highlight the "where" keyword [#823](https://github.com/jneen/rouge/pull/823) by @lvillani
+
+## version 3.0.0: 2017/09/21
+
+https://github.com/jneen/rouge/compare/v2.2.1...v3.0.0
+
+There is no breaking change in the public API, but internals' is changed.
+
+* general:
+  * dropped support for Ruby 1.9, requireing Ruby v2.0.0 (#775 by gfx)
+  * [Internal API changes] refactored disaambiguators to removes the use of analyze_text's numeric score interface (#763 by jneen)
+    * See https://github.com/jneen/rouge/pull/763 for details
+  * added `rouge guess $file` sub-command to test guessers (#773 by gfx)
+  * added `Rouge::Lexe.guess { fallback }` interface (#777 by gfx)
+  * removes BOM and normalizes newlines in input sources before lexing (#776 by gfx)
+* kotlin:
+  * fix errors in generic functions (#782 by gfx; thanks to @rongi for reporting it)
+* haskell:
+  * fix escapes in char literals (#780 by gfx; thanks to @Tosainu for reporting it)
+
+## version 2.2.1: 2017/08/22
+
+https://github.com/jneen/rouge/compare/v2.2.0...v2.2.1
+
+* powershell:
+  * Adding PowerShell builtin commands for version 5 (#757 thanks JacodeWeerd)
+* general:
+  * Rouge::Guessers::Modeline#filter: reduce object allocations (#756 thanks @parkr)
+
 ## version 2.2.0: 2017-08-09
 
 https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0

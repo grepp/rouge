@@ -23,7 +23,7 @@ module Rouge
 
       state :content do
         # block comments
-        rule %r(//.*?\n) do
+        rule %r(//.*?$) do
           token Comment::Single
           pop!; starts_block :single_comment
         end
@@ -42,13 +42,13 @@ module Rouge
 
         rule /:/, Name::Attribute, :old_style_attr
 
-        rule(/(?=.+?:([^a-z]|$))/) { push :attribute }
+        rule(/(?=[^\[\n]+?:([^a-z]|$))/) { push :attribute }
 
         rule(//) { push :selector }
       end
 
       state :single_comment do
-        rule /.*?\n/, Comment::Single, :pop!
+        rule /.*?$/, Comment::Single, :pop!
       end
 
       state :multi_comment do

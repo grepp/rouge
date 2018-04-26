@@ -9,12 +9,12 @@ module Rouge
       aliases 'rb'
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
-                'Vagrantfile', '*.ru', '*.prawn', 'Berksfile'
+                'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'ruby'
+      def self.detect?(text)
+        return true if text.shebang? 'ruby'
       end
 
       state :symbols do

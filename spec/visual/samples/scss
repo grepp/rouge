@@ -52,6 +52,16 @@ body {
       height: 72px;
       display: block;
       text-decoration: none;
+
+      &[href^="mailto:"] {
+        white-space: nowrap;
+      }
+    }
+
+    div {
+      a[href^="mailto:"] {
+        white-space: nowrap;
+      }
     }
   }
 
@@ -279,3 +289,5 @@ body {
     } 
   }
 }
+
+// Comment at EOF (#797)

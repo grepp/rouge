@@ -13,9 +13,9 @@ module Rouge
     def file
       case input
       when '-'
-        IO.new($stdin.fileno, 'r:utf-8')
+        IO.new($stdin.fileno, 'rt:bom|utf-8')
       when String
-        File.new(input, 'r:utf-8')
+        File.new(input, 'rt:bom|utf-8')
       when ->(i){ i.respond_to? :read }
         input
       end
@@ -44,6 +44,7 @@ module Rouge
       yield %|	help		#{Help.desc}|
       yield %|	style		#{Style.desc}|
       yield %|	list		#{List.desc}|
+      yield %|	guess		#{Guess.desc}|
       yield %|	version		#{Version.desc}|
       yield %||
       yield %|See `rougify help <command>` for more info.|
@@ -97,6 +98,8 @@ module Rouge
         Style
       when 'list'
         List
+      when 'guess'
+        Guess
       end
     end
 
@@ -374,6 +377,37 @@ module Rouge
         end
       end
     end
+
+    class Guess < CLI
+      def self.desc
+        "guess the languages of file"
+      end
+
+      def self.parse(args)
+        new(input_file: args.shift)
+      end
+
+      attr_reader :input_file, :input_source
+
+      def initialize(opts)
+        @input_file = opts[:input_file] || '-'
+        @input_source = FileReader.new(@input_file).read
+      end
+
+      def lexers
+        Lexer.guesses(
+          filename: input_file,
+          source: input_source,
+        )
+      end
+
+      def run
+        lexers.each do |l|
+          puts "{ tag: #{l.tag.inspect}, title: #{l.title.inspect}, desc: #{l.desc.inspect} }"
+        end
+      end
+    end
+
 
   private_class_method
     def self.normalize_syntax(argv)

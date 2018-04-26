@@ -66,7 +66,7 @@ module Rouge
         mixin :whitespace
         rule /\$(([1-9]\d*)?\d)/, Name::Variable
 
-        rule %r{[()\[\]{}:;,?]}, Punctuation
+        rule %r{[()\[\]{}:;,?\\]}, Punctuation
         rule %r([-/=+*%<>!&|^.~]+), Operator
         rule /@?"/, Str, :dq
         rule /'(\\.|.)'/, Str::Char
@@ -107,6 +107,11 @@ module Rouge
           groups Keyword, Text, Name::Variable
         end
 
+        rule /(let|var)\b(\s*)([(])/ do
+          groups Keyword, Text, Punctuation
+          push :tuple
+        end
+
         rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
           if m[0] =~ /^[[:upper:]]/
             token Keyword::Type
@@ -135,6 +140,21 @@ module Rouge
             token Name
           end
         end
+
+        rule /(`)(#{id})(`)/ do
+          groups Punctuation, Name::Variable, Punctuation
+        end
+      end
+
+      state :tuple do
+        rule /(#{id})/, Name::Variable
+        rule /(`)(#{id})(`)/ do
+            groups Punctuation, Name::Variable, Punctuation
+        end
+        rule /,/, Punctuation
+        rule /[(]/, Punctuation, :push
+        rule /[)]/, Punctuation, :pop!
+        mixin :inline_whitespace
       end
 
       state :dq do

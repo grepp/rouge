@@ -11,8 +11,8 @@ module Rouge
       filenames '*.hs'
       mimetypes 'text/x-haskell'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?('runhaskell')
+      def self.detect?(text)
+        return true if text.shebang?('runhaskell')
       end
 
       reserved = %w(
@@ -55,7 +55,6 @@ module Rouge
 
         rule /\bimport\b/, Keyword::Reserved, :import
         rule /\bmodule\b/, Keyword::Reserved, :module
-        rule /\berror\b/, Name::Exception
         rule /\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
         # not sure why, but ^ doesn't work here
         # rule /^[_a-z][\w']*/, Name::Function
@@ -82,6 +81,15 @@ module Rouge
 
         rule /\[\s*\]/, Keyword::Type
         rule /\(\s*\)/, Name::Builtin
+
+        # Quasiquotations
+        rule /(\[)([_a-z][\w']*)(\|)/ do |m|
+          token Operator, m[1]
+          token Name, m[2]
+          token Operator, m[3]
+          push :quasiquotation
+        end
+
         rule /[\[\](),;`{}]/, Punctuation
       end
 
@@ -148,7 +156,7 @@ module Rouge
       state :character do
         rule /\\/ do
           token Str::Escape
-          push :character_end
+          goto :character_end
           push :escape
         end
 
@@ -163,6 +171,12 @@ module Rouge
         rule /./, Error, :pop!
       end
 
+      state :quasiquotation do
+        rule /\|\]/, Operator, :pop!
+        rule /[^\|]+/m, Text
+        rule /\|/, Text
+      end
+
       state :string do
         rule /"/, Str, :pop!
         rule /\\/, Str::Escape, :escape
@@ -174,7 +188,7 @@ module Rouge
         rule /\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
         rule /#{ascii.join('|')}/, Str::Escape, :pop!
         rule /o[0-7]+/i, Str::Escape, :pop!
-        rule /x[\da-f]/i, Str::Escape, :pop!
+        rule /x[\da-f]+/i, Str::Escape, :pop!
         rule /\d+/, Str::Escape, :pop!
         rule /\s+\\/, Str::Escape, :pop!
       end

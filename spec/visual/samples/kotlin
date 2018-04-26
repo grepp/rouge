@@ -128,3 +128,16 @@ fun makeField(s: String): Field {
     return Field(longestLine.length, lines.size) { i, j -> lines[i][j] == '*' }
 }
 
+fun <T, V> genericFunction() {
+    return
+}
+
+fun String.extensionFunction() {
+   return
+}
+
+fun <T, V> String.genericExtensionFunction() {
+   return
+}
+
+// comment at EOF (#797)

@@ -10,16 +10,16 @@ module Rouge
       filenames '*.rs'
       mimetypes 'text/x-rust'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'rustc'
+      def self.detect?(text)
+        return true if text.shebang? 'rustc'
       end
 
       def self.keywords
         @keywords ||= %w(
           as assert break const copy do drop else enum extern fail false
           fn for if impl let log loop match mod move mut priv pub pure
-          ref return self static struct true trait type unsafe use while
-          box
+          ref return self static struct true trait type unsafe use where
+          while box
         )
       end
 

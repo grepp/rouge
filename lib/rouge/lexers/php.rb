@@ -75,10 +75,10 @@ module Rouge
         )
       end
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?('php')
-        return 0.3 if /<\?(?!xml)/ =~ text
-        0
+      def self.detect?(text)
+        return true if text.shebang?('php')
+        return false if /^<\?hh/ =~ text
+        return true if /^<\?php/ =~ text
       end
 
       state :root do
@@ -99,8 +99,8 @@ module Rouge
         # heredocs
         rule /<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
         rule /\s+/, Text
-        rule /#.*?\n/, Comment::Single
-        rule %r(//.*?\n), Comment::Single
+        rule /#.*?$/, Comment::Single
+        rule %r(//.*?$), Comment::Single
         # empty comment, otherwise seen as the start of a docstring
         rule %r(/\*\*/), Comment::Multiline
         rule %r(/\*\*.*?\*/)m, Str::Doc

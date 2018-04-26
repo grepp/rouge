@@ -22,7 +22,9 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
-      # Given a string, return the correct lexer class.
+      # Given a name in string, return the correct lexer class.
+      # @param [String] name
+      # @return [Class<Rouge::Lexer>,nil]
       def find(name)
         registry[name.to_s]
       end
@@ -42,6 +44,7 @@ module Rouge
       # markdown lexer for highlighting internal code blocks.
       #
       def find_fancy(str, code=nil, additional_options={})
+
         if str && !str.include?('?') && str != 'guess'
           lexer_class = find(str)
           return lexer_class && lexer_class.new(additional_options)
@@ -109,7 +112,7 @@ module Rouge
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo = File.read(demo_file, encoding: 'utf-8')
+        @demo = File.read(demo_file, mode: 'rt:bom|utf-8')
       end
 
       # @return a list of all lexers.
@@ -133,6 +136,7 @@ module Rouge
         guessers << Guessers::Filename.new(filename) if filename
         guessers << Guessers::Modeline.new(source) if source
         guessers << Guessers::Source.new(source) if source
+        guessers << Guessers::Disambiguation.new(filename, source) if source && filename
 
         Guesser.guess(guessers, Lexer.all)
       end
@@ -147,16 +151,23 @@ module Rouge
       #   The source itself, which, if guessing by mimetype or filename
       #   fails, will be searched for shebangs, <!DOCTYPE ...> tags, and
       #   other hints.
+      # @param [Proc] fallback called if multiple lexers are detected.
+      #   If omitted, Guesser::Ambiguous is raised.
       #
-      # @see Lexer.analyze_text
+      # @see Lexer.detect?
       # @see Lexer.guesses
-      def guess(info={})
+      # @return [Class<Rouge::Lexer>]
+      def guess(info={}, &fallback)
         lexers = guesses(info)
 
         return Lexers::PlainText if lexers.empty?
         return lexers[0] if lexers.size == 1
 
-        raise Guesser::Ambiguous.new(lexers)
+        if fallback
+          fallback.call(lexers)
+        else
+          raise Guesser::Ambiguous.new(lexers)
+        end
       end
 
       def guess_by_mimetype(mt)
@@ -425,16 +436,14 @@ module Rouge
 
     # @abstract
     #
-    # Return a number between 0 and 1 indicating the likelihood that
-    # the text given should be lexed with this lexer.  The default
-    # implementation returns 0.  Values under 0.5 will only be used
-    # to disambiguate filename or mimetype matches.
+    # Return true if there is an in-text indication (such as a shebang
+    # or DOCTYPE declaration) that this lexer should be used.
     #
     # @param [TextAnalyzer] text
     #   the text to be analyzed, with a couple of handy methods on it,
     #   like {TextAnalyzer#shebang?} and {TextAnalyzer#doctype?}
-    def self.analyze_text(text)
-      0
+    def self.detect?(text)
+      false
     end
   end
 
